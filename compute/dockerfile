@@ -1,0 +1,25 @@
+FROM 		ubuntu:14.04
+MAINTAINER  OpenDaylight Int/Test Project Team <integration-dev@lists.opendaylight.org>
+
+# Add stack user
+RUN 		groupadd stack && \
+			useradd -g stack -s /bin/bash -m stack && \
+			echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Grant access to /dev/kvm
+#RUN chmod 0666 /dev/kvm
+
+# Install git and sshd
+RUN 		apt-get update && \
+			apt-get install -y --no-install-recommends git openssh-server && \
+			rm -rf /var/lib/apt/lists/*
+
+# Get devstack
+USER 		stack
+RUN 		git clone git://git.openstack.org/openstack-dev/devstack /home/stack/devstack
+COPY 		local.conf /home/stack/devstack/
+# chown local.conf to stack
+RUN 		chown stack:stack /home/stack/devstack/local.conf
+
+CMD ["/start.sh"]
+
