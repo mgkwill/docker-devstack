@@ -11,7 +11,7 @@ echo nameserver 8.8.8.8 | sudo tee -a /etc/resolv.conf
 # Start SSH Service
 sudo service ssh start
 
-# Start ovsbd-server
+# Start openvswitch
 sudo service openvswitch-switch start 
 
 echo -e $STACK_PASS | sudo passwd stack
