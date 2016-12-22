@@ -17,8 +17,8 @@ sudo service openvswitch-switch start
 echo -e $STACK_PASS | sudo passwd stack
 
 # Add/Configure local.conf - requires use of 'docker run -v :/home/stack/mnt
-sudo chown stack:stack /home/stack/mnt/local.conf
-cp /home/stack/mnt/local.conf /home/stack/devstack/local.conf
+sudo chmod 766 /home/stack/local.conf
+cp /home/stack/local.conf /home/stack/devstack/local.conf
 
 sed -i "s/SERVICE_HOST=/SERVICE_HOST=$SERV_HOST/" /home/stack/devstack/local.conf
 
