@@ -1,6 +1,8 @@
 FROM 		ubuntu:14.04
 MAINTAINER  OpenDaylight Int/Test Project Team <integration-dev@lists.opendaylight.org>
 
+ENV    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
 # Add stack user
 RUN 		groupadd stack && \
 		useradd -g stack -s /bin/bash -m stack && \
