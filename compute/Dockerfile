@@ -27,6 +27,6 @@ RUN 		sudo chown stack:stack /home/stack/devstack/local.conf
 COPY		start.sh /home/stack/
 RUN		sudo chown stack:stack /home/stack/start.sh && chmod 766 /home/stack/start.sh
 
-CMD		["/start.sh"]
+CMD		["/home/stack/start.sh"]
 
 # vim: set ft=dockerfile noet sw=4 ts=4 :
