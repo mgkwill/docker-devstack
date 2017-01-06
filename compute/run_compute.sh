@@ -16,22 +16,6 @@ if [ -n "$1" ] ; then
     COMMAND="$1"
 fi
 
-# modify the local.conf according to ODL_NETWORK value
-CONF_PATH="./local.conf"
-echo "Preparing $CONF_PATH for ODL=$ODL_NETWORK"
-echo
-if [ "$ODL_NETWORK" == "false" ] ; then 
-    # prepare local.conf to NOT use ODL networking (default to Neutron)
-    sed -i "s:^\(enable_plugin networking-odl\):#\1:g" $CONF_PATH
-    sed -i "s:^\(ODL_MODE=compute\):#\1:g" $CONF_PATH
-    sed -i "s:^\(ENABLED_SERVICES=\).*:\1n-cpu,q-agt:g" $CONF_PATH
-else
-    # prepare local.conf to use ODL networking
-    sed -i "s:^#\(enable_plugin networking-odl\):\1:g" $CONF_PATH
-    sed -i "s:^#\(ODL_MODE=compute\):\1:g" $CONF_PATH
-    sed -i "s:^\(ENABLED_SERVICES=\).*:\1n-cpu:g" $CONF_PATH
-fi
-
 docker run -it --name ${NAME} --hostname ${NAME} \
     --env http_proxy=$http_proxy --env https_proxy=$https_proxy \
     --env ODL_NETWORK=$ODL_NETWORK \
