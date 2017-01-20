@@ -13,11 +13,11 @@ CONF_PATH=$DEVSTACK_HOME/local.conf
 #Set Nameserver to google
 echo nameserver 8.8.8.8 | sudo tee -a /etc/resolv.conf
 
-# Start SSH Service
-sudo service ssh start
-
-# Start openvswitch
-sudo service openvswitch-switch start
+## Start SSH Service
+#sudo service ssh start
+#
+## Start openvswitch
+#sudo service openvswitch-switch start
 
 # START HERE: the following line throws an error
 echo "stack:$STACK_PASS" | sudo chpasswd
@@ -25,15 +25,18 @@ echo "stack:$STACK_PASS" | sudo chpasswd
 # get container IP 
 ip=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
 # fix address binding issue in mysql
-sudo sed -i 's:^bind-address = 0.0.0.0:#&:' /etc/mysql/my.cnf
-sudo service mysql restart 
+sudo sed -i 's:^bind-address = .*:bind-address = ${ip}:' /etc/mysql/my.cnf
 
 # update the ip of this host
-sudo sed -i "s:\(HOST_IP=\).*:\1${ip}:" $CONF_PATH
-sudo sed -i "s:\(SERVICE_HOST=\).*:\1${ip}:" $CONF_PATH
+#sudo sed -i "s:\(HOST_IP=\).*:\1${ip}:" $CONF_PATH
+#sudo sed -i "s:\(SERVICE_HOST=\).*:\1${ip}:" $CONF_PATH
+# allow mysql service to start
+sudo sed -i 's:^exit .*:exit 0:' /usr/sbin/policy-rc.d
 
-cd $DEVSTACK_HOME
-git checkout origin/stable/newton
+# sudo service mysql restart 
+
+#cd $DEVSTACK_HOME
+#git checkout -b newton -t origin/stable/newton
 
 $DEVSTACK_HOME/stack.sh
 

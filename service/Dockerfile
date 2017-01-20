@@ -1,7 +1,8 @@
 FROM 		ubuntu:14.04
 MAINTAINER	OpenDaylight Int/Test Project Team <integration-dev@lists.opendaylight.org>
 
-ENV		PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV		PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+            DEBIAN_FRONTEND=noninteractive
 
 # Add stack user
 RUN		groupadd stack && \
