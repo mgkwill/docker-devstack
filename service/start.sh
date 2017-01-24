@@ -43,7 +43,3 @@ git checkout -b newton -t origin/stable/newton
 # begin stacking 
 $DEVSTACK_HOME/stack.sh
 
-# TODO: AFTER devstack/requirements is cloned into /opt/stack/requirements, 
-# we need to modify the upper_constraints.txt file to use packaging 16.8, 
-# to satisfy setuptools 30.0 minimum requirements: 
-# sed -i "s:packaging===16.7:packaging===16.8:" /opt/stack/requirements/upper-constraints.txt
