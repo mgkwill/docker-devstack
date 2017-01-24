@@ -11,7 +11,7 @@ BASE_IMAGE="s3p/service:experimental"
 # image configuration 
 NAME=service-node
 ODL_NETWORK=true
-CAPABILITIES="--privileged --cap-add ALL "
+CAPABILITIES="--privileged --cap-add ALL --cap-add NET_ADMIN --cap-add NET_RAW"
 SERV_HOST=172.17.0.2
 STACK_PASS=stack
 # COMMAND="/home/stack/start.sh"
@@ -22,14 +22,11 @@ if [ -n "$1" ] ; then
     COMMAND="$1"
 fi
 
-CONF_FILE="$(pwd)/control.ODL.local.conf"
+CONF_FILE="$(pwd)/service.local.conf"
 if [ ! "$ODL_NETWORK" ] ; then 
     echo "Using no-ODL local.conf"
     CONF_FILE="$(pwd)/control.noODL.local.conf"
 fi
-
-CONF_FILE=$(pwd)/database_only.conf
-echo "TEMPORARY, REMOVE THIS CONF FILE, ONLY FOR TESTING>>> $CONF_FILE"
 
 docker run -it --name ${NAME} --hostname ${NAME} --env TZ=America/Los_Angeles \
     --env JAVA_HOME=/usr/lib/jvm/java-8-oracle --env JAVA_MAX_MEM=16g \
