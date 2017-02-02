@@ -12,7 +12,7 @@ RUN		groupadd stack && \
 RUN 		apt-get update && \
 		apt-get install -y --no-install-recommends git \
 		openssh-server ca-certificates openvswitch-common \
-		openvswitch-switch dbus && \ 
+		openvswitch-switch dbus && \
 		rm -rf /var/lib/apt/lists/*
 
 # Get devstack
