@@ -10,7 +10,7 @@ IMAGE_NAME="${IMAGE_REPO}:${IMAGE_VERSION}"
 
 # image configuration
 HOST_ID=01
-COMP_ID=09
+COMP_ID=07
 NAME=compute-${HOST_ID}-${COMP_ID}
 ODL_NETWORK=false
 CAPABILITIES="--privileged --cap-add ALL --security-opt apparmor=docker-unconfined "
