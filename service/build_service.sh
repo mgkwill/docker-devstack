@@ -1,10 +1,10 @@
 #!/bin/bash
 # file: build_service.sh
-# info: builds a docker service image 
+# info: builds a docker service image
 IMAGE_BASE=s3p/service
 IMAGE_TAG=v0.1
 
-if [ -n "$1" ] ; then 
+if [ -n "$1" ] ; then
     # use arg as image tag if supplied
     IMAGE_TAG="$1"
 fi

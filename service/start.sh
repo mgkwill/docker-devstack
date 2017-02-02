@@ -9,7 +9,7 @@ set -o nounset # throw an error if a variable is unset to prevent unexpected beh
 ODL_NETWORK=${ODL_NETWORK}
 DEVSTACK_HOME="/home/stack/devstack"
 CONF_PATH=$DEVSTACK_HOME/local.conf
-BRANCH_NAME=newton
+BRANCH_NAME=stable/newton
 TAG_NAME="origin/stable/${BRANCH_NAME}"
 
 #Set Nameserver to google

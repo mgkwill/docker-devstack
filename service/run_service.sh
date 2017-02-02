@@ -1,14 +1,14 @@
 #!/bin/bash
 # file: run_service.sh
-# info: spawns a docker service image 
+# info: spawns a docker service image
 # dependencies: assumes proxy variables are defined in the local environment
 
-# image selection 
+# image selection
 IMAGE_REPO="s3p/service"
 IMAGE_VERSION="v0.1"
 IMAGE_NAME="${IMAGE_REPO}:${IMAGE_VERSION}"
 
-# image configuration 
+# image configuration
 ODL_NETWORK=false
 CAPABILITIES="--privileged --cap-add ALL --cap-add NET_ADMIN --cap-add NET_RAW"
 SERV_HOST=172.17.0.4
@@ -26,7 +26,7 @@ else
     NAME=service-node-odl
 fi
 if [ -n "$1" ] ; then
-    # if a command is specified as an argument to the script, use it, 
+    # if a command is specified as an argument to the script, use it,
     # else, default to the CMD defined in the Dockerfile
     echo "Command argument supplied, running \"$1\" in $NAME..."
     COMMAND="$1"
