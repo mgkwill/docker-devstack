@@ -4,12 +4,12 @@
 # dependencies: assumes proxy variables are defined in the local environment
 
 HOST_ID=01
-COMP_ID=06
+COMP_ID=07
 NAME=compute-${HOST_ID}-${COMP_ID}
 BASE_IMAGE=s3p/compute:working
 ODL_NETWORK=false
 COMMAND="/home/stack/start.sh"
-CAPABILITIES="--privileged --cap-add ALL "
+CAPABILITIES="--privileged --cap-add ALL --security-opt apparmor=docker-unconfined "
 MOUNTS="-v /dev:/dev -v /lib/modules:/lib/modules "
 
 if [ -n "$1" ] ; then
