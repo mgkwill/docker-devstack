@@ -3,14 +3,14 @@
 #  example 'docker run -e "STACK_PASS=stack" -e "SERV_HOST=192.168.0.5" compute'
 # or overided below by uncommenting:
 STACK_PASS="stack"
-SERV_HOST="192.168.0.5"
+SERV_HOST="172.17.0.3"
 # ODL_NETWORK should be set in the 'docker run' script
 set -o nounset # throw an error if a variable is unset to prevent unexpected behaviors
 ODL_NETWORK=${ODL_NETWORK}
 DEVSTACK_HOME="/home/stack/devstack"
 CONF_PATH=$DEVSTACK_HOME/local.conf
 BRANCH_NAME=stable/newton
-TAG_NAME="origin/stable/${BRANCH_NAME}"
+TAG_NAME="origin/${BRANCH_NAME}"
 
 #Set Nameserver to google
 echo nameserver 8.8.8.8 | sudo tee -a /etc/resolv.conf
@@ -28,6 +28,7 @@ sudo sed -i 's:^exit .*:exit 0:' /usr/sbin/policy-rc.d
 
 # set the correct branch in devstack
 cd $DEVSTACK_HOME
+git fetch
 git checkout -b ${BRANCH_NAME} -t ${TAG_NAME}
 
 # copy local.conf into devstack and customize, based on environment including:

@@ -1,17 +1,21 @@
-FROM 		ubuntu:14.04
-MAINTAINER	OpenDaylight Int/Test Project Team <integration-dev@lists.opendaylight.org>
+FROM		ubuntu:14.04
+MAINTAINER	OpenDaylight Integration Project Team <integration-dev@lists.opendaylight.org>
 
 ENV		PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-            DEBIAN_FRONTEND=noninteractive
+        DEBIAN_FRONTEND=noninteractive
+
+# Install devstack dependencies
+# Install vim for utility, remove before final build
+RUN     apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        iptables \
+        ca-certificates \
+        vim
 
 # Add stack user
 RUN		groupadd stack && \
 		useradd -g stack -s /bin/bash -m stack && \
 		echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-# Install devstack dependencies
-# Install vim for utility, remove before final build
-RUN 		apt-get update && apt-get install -y --no-install-recommends git vim iptables ca-certificates
 
 # Get devstack
 USER		stack
