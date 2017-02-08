@@ -10,7 +10,7 @@ ODL_NETWORK=${ODL_NETWORK}
 DEVSTACK_HOME="/home/stack/devstack"
 CONF_PATH=$DEVSTACK_HOME/local.conf
 BRANCH_NAME=stable/newton
-TAG_NAME="origin/stable/${BRANCH_NAME}"
+TAG_NAME="origin/${BRANCH_NAME}"
 
 #Set Nameserver to google
 echo nameserver 8.8.8.8 | sudo tee -a /etc/resolv.conf
@@ -22,13 +22,16 @@ echo "stack:$STACK_PASS" | sudo chpasswd
 ip=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
 
 # Start SSH Service
-sudo service ssh start
+# Centos7: sudo: service: command not found
+#sudo service ssh start
 
 # Start openvswitch
-sudo service openvswitch-switch start
+# Centos7: sudo: service: command not found
+#sudo service openvswitch-switch start
 
 # set the correct branch in devstack
 cd $DEVSTACK_HOME
+git fetch
 git checkout -b ${BRANCH_NAME} -t ${TAG_NAME}
 
 # copy local.conf into devstack and customize, based on environment including:
