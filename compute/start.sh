@@ -1,10 +1,7 @@
 #!/bin/sh
-# On docker run, Env Variables "STACK_PASS & SERV_HOST" should be set using -e
-#  example 'docker run -e "STACK_PASS=stack" -e "SERV_HOST=192.168.0.5" compute'
+# On docker run, Env Variables "STACK_PASS & SERVICE_HOST" should be set using -e
+#  example 'docker run -e "STACK_PASS=stack" -e "SERVICE_HOST=192.168.0.5" compute'
 # or overided below by uncommenting:
-#STACK_PASS="stack"
-# SERV_HOST="192.168.0.5"
-# ODL_NETWORK should be set in the 'docker run' script
 set -o nounset # throw an error if a variable is unset to prevent unexpected behaviors
 ODL_NETWORK=${ODL_NETWORK}
 DEVSTACK_HOME="/home/stack/devstack"
@@ -21,13 +18,8 @@ echo "stack:$STACK_PASS" | sudo chpasswd
 # get container IP
 ip=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
 
-# Start SSH Service
-# Centos7: sudo: service: command not found
-#sudo service ssh start
-
-# Start openvswitch
-# Centos7: sudo: service: command not found
-#sudo service openvswitch-switch start
+# remove OVS db (for case of restacking a node to regenerate UUID)
+sudo rm -rf /etc/openvswitch/conf.db
 
 # set the correct branch in devstack
 cd $DEVSTACK_HOME
@@ -35,13 +27,13 @@ git fetch
 git checkout -b ${BRANCH_NAME} -t ${TAG_NAME}
 
 # copy local.conf into devstack and customize, based on environment including:
-# ODL_NETWORK, ip, DEVSTACK_HOME, SERV_HOST
+# ODL_NETWORK, ip, DEVSTACK_HOME, SERVICE_HOST
 cp /home/stack/local.conf $CONF_PATH
 
 # Configure local.conf
 # update the ip of this host & SERVICE_HOST
 sed -i "s/HOST_IP=.*/HOST_IP=${ip}/" $CONF_PATH
-sed -i "s/SERVICE_HOST=.*/SERVICE_HOST=$SERV_HOST/" $CONF_PATH
+sed -i "s/SERVICE_HOST=.*/SERVICE_HOST=$SERVICE_HOST/" $CONF_PATH
 # modify the local.conf according to ODL_NETWORK value
 echo "Preparing $CONF_PATH for ODL=$ODL_NETWORK"
 echo
