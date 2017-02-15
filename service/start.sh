@@ -3,7 +3,7 @@
 #  example 'docker run -e "STACK_PASS=stack" -e "SERV_HOST=192.168.0.5" compute'
 # or overided below by uncommenting:
 STACK_PASS="stack"
-SERV_HOST="172.17.0.3"
+SERV_HOST="10.20.0.2"
 # ODL_NETWORK should be set in the 'docker run' script
 set -o nounset # throw an error if a variable is unset to prevent unexpected behaviors
 ODL_NETWORK=${ODL_NETWORK}
@@ -57,3 +57,10 @@ fi
 # begin stacking
 $DEVSTACK_HOME/stack.sh
 
+# write a marker file to indicate successful stacking
+if [ $? = 0 ] ; then
+cat > stacking.status <<EOF
+$(hostname) stacking successful at $(date)
+EOF
+    /home/stack/devstack/tools/info.sh >> stacking.status
+fi
