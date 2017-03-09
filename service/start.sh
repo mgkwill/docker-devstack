@@ -2,10 +2,10 @@
 # On docker run, Env Variables "STACK_PASS & SERV_HOST" should be set using -e
 #  example 'docker run -e "STACK_PASS=stack" -e "SERV_HOST=192.168.0.5" compute'
 # or overided below by uncommenting:
-STACK_PASS="stack"
-SERV_HOST="10.20.0.2"
-# ODL_NETWORK should be set in the 'docker run' script
 set -o nounset # throw an error if a variable is unset to prevent unexpected behaviors
+STACK_PASS="stack"
+SERV_HOST=${SERVICE_HOST:-192.168.3.2}
+# ODL_NETWORK should be set in the 'docker run' script
 ODL_NETWORK=${ODL_NETWORK}
 DEVSTACK_HOME="/home/stack/devstack"
 CONF_PATH=$DEVSTACK_HOME/local.conf
