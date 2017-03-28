@@ -1,7 +1,7 @@
 #!/bin/bash
-# file: build_service.sh
-# info: builds a docker service image
-IMAGE_REPO=${IMAGE_REPO:-s3p/service}
+# file: build_systemd.sh
+# info: builds a docker image with systemd
+IMAGE_REPO=${IMAGE_REPO:-s3p/systemd}
 IMAGE_TAG=${IMAGE_TAG:-latest}
 
 if [ -n "$1" ] ; then
@@ -9,7 +9,7 @@ if [ -n "$1" ] ; then
     IMAGE_TAG="$1"
 fi
 IMAGE_NAME=${IMAGE_REPO}:${IMAGE_TAG}
-DOCKERFILE=${DOCKERFILE:-service.ubuntu1604.Dockerfile}
+DOCKERFILE=${DOCKERFILE:-systemd.ubuntu1604.Dockerfile}
 
 echo "Building $IMAGE_NAME from Dockerfile=$DOCKERFILE at $(date) ... "
 docker build -t ${IMAGE_NAME} -f ${DOCKERFILE} \

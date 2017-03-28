@@ -1,15 +1,15 @@
 #!/bin/bash
 # file: build_compute.sh
 # info: builds a docker compute image
-IMAGE_BASE=s3p/compute
-IMAGE_TAG=v0.2
+IMAGE_REPO=${IMAGE_REPO:-s3p/compute}
+IMAGE_TAG=${IMAGE_TAG:-latest}
 
 if [ -n "$1" ] ; then
     # use arg as image tag if supplied
     IMAGE_TAG="$1"
 fi
-IMAGE_NAME=${IMAGE_BASE}:${IMAGE_TAG}
-DOCKERFILE="Dockerfile"
+IMAGE_NAME=${IMAGE_REPO}:${IMAGE_TAG}
+DOCKERFILE=${DOCKERFILE:-"compute.ubuntu1604.Dockerfile"}
 
 echo "Building $IMAGE_NAME from Dockerfile=$DOCKERFILE at $(date) ... "
 docker build -t ${IMAGE_NAME} -f ${DOCKERFILE} \

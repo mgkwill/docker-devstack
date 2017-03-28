@@ -1,7 +1,7 @@
 #!/bin/bash
 # file: start_overlay_net.sh
 NET_DRIVER=overlay
-SUBNET=10.20.0.0/22
+SUBNET=192.168.3.0/24
 NET_NAME=overlay-net
 
 NET_JSON=$(docker network inspect $NET_NAME &2>/dev/null )

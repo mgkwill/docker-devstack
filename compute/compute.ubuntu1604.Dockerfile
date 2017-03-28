@@ -9,10 +9,13 @@ ENV     PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 RUN     apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         git \
+        inetutils-ping \
         iproute2 \
         iptables \
         lsb-release \
-        net-tools \
+        openssh-server \
+        openvswitch-common \
+        openvswitch-switch \
         sudo \
         vim && \
         rm -rf /var/lib/apt/lists/*
@@ -23,7 +26,7 @@ RUN     groupadd stack && \
         echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # copy local.conf & scripts
-COPY    service.ubuntu1604.local.conf /home/stack/local.conf
+COPY    compute.ubuntu1604.local.conf /home/stack/local.conf
 COPY    start.sh /home/stack/start.sh
 COPY    restart.sh /home/stack/restart.sh
 RUN     chown -R stack:stack /home/stack && \

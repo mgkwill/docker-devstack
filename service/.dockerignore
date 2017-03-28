@@ -1,4 +1,9 @@
+*.bak
+*logs*
+analysis
 history
 logs
-oldlogs
 makefiles
+oldlogs
+working
+experiments

@@ -2,3 +2,6 @@ logs
 history
 *.history
 testing
+analysis
+experiments
+working

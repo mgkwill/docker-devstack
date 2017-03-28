@@ -10,7 +10,7 @@ BRANCH_NAME=stable/newton
 TAG_NAME="origin/${BRANCH_NAME}"
 
 #Set Nameserver to google
-echo nameserver 8.8.8.8 | sudo tee -a /etc/resolv.conf
+[ -z "$(grep "8.8.8.8" /etc/resolv.conf )" ] && echo nameserver 8.8.8.8 | sudo tee -a /etc/resolv.conf
 
 # change the stack user password
 echo "stack:$STACK_PASS" | sudo chpasswd
@@ -20,11 +20,17 @@ ip=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
 
 # remove OVS db (for case of restacking a node to regenerate UUID)
 sudo rm -rf /etc/openvswitch/conf.db
+#  recreate machine-id for EACH compute node in start.sh 
+# systemd-machine-id-setup # creates new UUID in /etc/machine-id
+
+# remove any dead screen sessions from previous stacking
+screen -wipe
 
 # set the correct branch in devstack
 cd $DEVSTACK_HOME
-git fetch
-git checkout -b ${BRANCH_NAME} -t ${TAG_NAME}
+[ -z "$(git branch -a | grep "* ${BRANCH_NAME}")" ] && \
+        git fetch && \
+        git checkout -b ${BRANCH_NAME} -t ${TAG_NAME}
 
 # copy local.conf into devstack and customize, based on environment including:
 # ODL_NETWORK, ip, DEVSTACK_HOME, SERVICE_HOST
@@ -37,7 +43,7 @@ sed -i "s/SERVICE_HOST=.*/SERVICE_HOST=$SERVICE_HOST/" $CONF_PATH
 # modify the local.conf according to ODL_NETWORK value
 echo "Preparing $CONF_PATH for ODL=$ODL_NETWORK"
 echo
-if [ "$ODL_NETWORK" = "false" ] ; then
+if [ "$ODL_NETWORK" = "False" ] ; then
     # prepare local.conf to NOT use ODL networking (default to Neutron)
     sed -i "s:^\(enable_plugin networking-odl\):#\1:g" $CONF_PATH
     sed -i "s:^\(ODL_MODE=compute\):#\1:g" $CONF_PATH
@@ -50,4 +56,12 @@ else
 fi
 
 $DEVSTACK_HOME/stack.sh
+
+# write a marker file to indicate successful stacking
+if [ $? = 0 ] ; then
+    echo "$(hostname) stacking successful at $(date)" >> stacking.status
+    /home/stack/devstack/tools/info.sh >> stacking.status
+fi
+
+# vim set et ts=4 sw=4 :
 

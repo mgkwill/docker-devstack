@@ -5,7 +5,7 @@
 
 # image selection
 IMAGE_REPO=${IMAGE_REPO:-s3p/service}
-IMAGE_TAG=${IMAGE_TAG:-v0.2}
+IMAGE_TAG=${IMAGE_TAG:-v0.3}
 IMAGE_NAME="${IMAGE_REPO}:${IMAGE_TAG}"
 
 # image configuration
@@ -29,7 +29,8 @@ PORT_MAP="-p ${HORIZON_PORT_HOST}:${HORIZON_PORT_CONTAINER} -p ${DLUX_PORT_HOST}
 NETWORK_NAME="overlay-net"
 NETWORK_SETTINGS="--net=$NETWORK_NAME $PORT_MAP"
 
-NAME=${HOST_NAME:-service-node2}
+NAME=${HOST_NAME:-service-node}
+# TODO: the following section, up to the "run" seems unnecessary
 CONF_FILE="$(pwd)/service.odl.local.conf"
 if [ "$ODL_NETWORK" = "False" ] ; then
     CONF_FILE="$(pwd)/service.neutron.local.conf"
