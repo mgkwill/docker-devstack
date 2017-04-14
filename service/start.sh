@@ -64,7 +64,8 @@ else
 fi
 
 # begin stacking
-$DEVSTACK_HOME/stack.sh
+cd $DEVSTACK_HOME
+./stack.sh
 
 # write a marker file to indicate successful stacking
 if [ $? = 0 ] ; then

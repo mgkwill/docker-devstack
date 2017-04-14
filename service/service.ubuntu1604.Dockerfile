@@ -26,9 +26,11 @@ RUN     groupadd stack && \
 COPY    service.ubuntu1604.local.conf /home/stack/local.conf
 COPY    start.sh /home/stack/start.sh
 COPY    restart.sh /home/stack/restart.sh
+COPY    create_servers.sh /home/stack/create_servers.sh
 RUN     chown -R stack:stack /home/stack && \
         chmod 766 /home/stack/start.sh && \
-        chmod 766 /home/stack/restart.sh
+        chmod 766 /home/stack/restart.sh && \
+        chmod 766 /home/stack/create_servers.sh
 
 # get devstack
 RUN     git clone https://git.openstack.org/openstack-dev/devstack /home/stack/devstack && \

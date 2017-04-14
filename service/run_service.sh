@@ -23,10 +23,12 @@ MOUNTS="-v /dev:/dev -v /lib/modules:/lib/modules $CGROUP_MOUNT $SYSTEMD_ENABLIN
 PORT_MAP_OFFSET=50000
 HORIZON_PORT_CONTAINER=80
 DLUX_PORT_CONTAINER=8181
+VNC_PORT_CONTAINER=6080
 HORIZON_PORT_HOST=$(( $PORT_MAP_OFFSET + $HORIZON_PORT_CONTAINER ))
 DLUX_PORT_HOST=$(( $PORT_MAP_OFFSET + $DLUX_PORT_CONTAINER ))
-PORT_MAP="-p ${HORIZON_PORT_HOST}:${HORIZON_PORT_CONTAINER} -p ${DLUX_PORT_HOST}:${DLUX_PORT_CONTAINER}"
-NETWORK_NAME="overlay-net"
+VNC_PORT_HOST=$(( $PORT_MAP_OFFSET + $VNC_PORT_CONTAINER ))
+PORT_MAP="-p ${HORIZON_PORT_HOST}:${HORIZON_PORT_CONTAINER} -p ${DLUX_PORT_HOST}:${DLUX_PORT_CONTAINER} -p ${VNC_PORT_HOST}:${VNC_PORT_CONTAINER} "
+NETWORK_NAME=${NETWORK_NAME:-"mgmt-net"}
 NETWORK_SETTINGS="--net=$NETWORK_NAME $PORT_MAP"
 
 NAME=${HOST_NAME:-service-node}
@@ -48,7 +50,7 @@ fi
 echo "Starting up docker container from image ${IMAGE_NAME}"
 echo "name: $NAME"
 docker run -dit --name ${NAME} --hostname ${NAME} --env TZ=America/Los_Angeles \
-    --env JAVA_HOME=/usr/lib/jvm/java-8-oracle --env JAVA_MAX_MEM=16g \
+    --env JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 --env JAVA_MAX_MEM=16g \
     --env http_proxy=$http_proxy --env https_proxy=$https_proxy \
     --env no_proxy=$_no_proxy \
     --env ODL_NETWORK=$ODL_NETWORK \
