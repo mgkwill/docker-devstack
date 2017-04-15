@@ -35,10 +35,10 @@ NAME=${HOST_NAME:-service-node}
 # TODO: the following section, up to the "run" seems unnecessary
 CONF_FILE="$(pwd)/service.odl.local.conf"
 if [ "$ODL_NETWORK" = "False" ] ; then
-    CONF_FILE="$(pwd)/service.neutron.local.conf"
-    echo "Using no-ODL (Neutron) local.conf ($CONF_FILE}"
+    CONF_FILE="$(pwd)/service.ovs.local.conf"
+    echo "Using OVS-ML2 (Neutron) local.conf ($CONF_FILE}"
 else
-    echo "Using OpenDaylight for local.conf ($CONF_FILE})"
+    echo "Using OpenDaylight-ML2 for local.conf ($CONF_FILE})"
 fi
 if [ -n "$1" ] ; then
     # if a command is specified as an argument to the script, use it,

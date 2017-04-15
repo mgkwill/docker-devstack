@@ -39,33 +39,21 @@ cd $DEVSTACK_HOME
 	git fetch && \
 	git checkout -b ${BRANCH_NAME} -t ${TAG_NAME}
 
-# copy local.conf into devstack and customize, based on environment including:
-# ODL_NETWORK, ip, DEVSTACK_HOME, SERVICE_HOST
-cp /home/stack/local.conf $CONF_PATH
-
 # Configure local.conf
+# copy local.conf into devstack and customize, based on environment:
+SRC_CONF=service.odl.local.conf
+if [ "$ODL_NETWORK" = "False" ] ; then
+    SRC_CONF=service.ovs.local.conf
+fi
+cp /home/stack/$SRC_CONF $CONF_PATH
+
 # update the ip of this host
 sed -i "s:\(HOST_IP=\).*:\1${ip}:" $CONF_PATH
 sed -i "s:\(SERVICE_HOST=\).*:\1${ip}:" $CONF_PATH
-# modify the local.conf according to ODL_NETWORK value
-echo "Preparing $CONF_PATH for ODL=$ODL_NETWORK"
-echo
-if [ "$ODL_NETWORK" = "False" ] ; then
-    # prepare local.conf to NOT use ODL networking (default to Neutron)
-    sed -i "s:^#\(enable_service q-agt\).*:\1:g" $CONF_PATH
-    sed -i "s:^\(enable_plugin networking-odl\):#\1:g" $CONF_PATH
-    sed -i "s:^\(Q_ML2_PLUGIN_MECHANISM_DRIVERS=opendaylight\).*:#\1:g" $CONF_PATH
-    sed -i "s:^\(mechanism_drivers=\).*:\1openvswitch:g" $CONF_PATH
-else
-    # prepare local.conf to use ODL networking
-    sed -i "s:^\(enable_service q-agt\):#\1:g" $CONF_PATH
-    sed -i "s:^#\(enable_plugin networking-odl\):\1:g" $CONF_PATH
-    sed -i "s:^#\(Q_ML2_PLUGIN_MECHANISM_DRIVERS=opendaylight\).*:\1:g" $CONF_PATH
-fi
 
 # begin stacking
 cd $DEVSTACK_HOME
-./stack.sh
+$DEVSTACK_HOME/stack.sh
 
 # write a marker file to indicate successful stacking
 if [ $? = 0 ] ; then

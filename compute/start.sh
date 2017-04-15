@@ -32,29 +32,20 @@ cd $DEVSTACK_HOME
         git fetch && \
         git checkout -b ${BRANCH_NAME} -t ${TAG_NAME}
 
-# copy local.conf into devstack and customize, based on environment including:
-# ODL_NETWORK, ip, DEVSTACK_HOME, SERVICE_HOST
-cp /home/stack/local.conf $CONF_PATH
+# Configure local.conf
+# copy local.conf into devstack and customize, based on environment:
+SRC_CONF=compute.odl.local.conf
+if [ "$ODL_NETWORK" = "False" ] ; then
+    SRC_CONF=compute.ovs.local.conf
+fi
+cp /home/stack/$SRC_CONF $CONF_PATH
 
 # Configure local.conf
 # update the ip of this host & SERVICE_HOST
 sed -i "s/HOST_IP=.*/HOST_IP=${ip}/" $CONF_PATH
 sed -i "s/SERVICE_HOST=.*/SERVICE_HOST=$SERVICE_HOST/" $CONF_PATH
-# modify the local.conf according to ODL_NETWORK value
-echo "Preparing $CONF_PATH for ODL=$ODL_NETWORK"
-echo
-if [ "$ODL_NETWORK" = "False" ] ; then
-    # prepare local.conf to NOT use ODL networking (default to Neutron)
-    sed -i "s:^\(enable_plugin networking-odl\):#\1:g" $CONF_PATH
-    sed -i "s:^\(ODL_MODE=compute\):#\1:g" $CONF_PATH
-    sed -i "s:^\(ENABLED_SERVICES=\).*:\1n-cpu,q-agt:g" $CONF_PATH
-else
-    # prepare local.conf to use ODL networking
-    sed -i "s:^#\(enable_plugin networking-odl\):\1:g" $CONF_PATH
-    sed -i "s:^#\(ODL_MODE=compute\):\1:g" $CONF_PATH
-    sed -i "s:^\(ENABLED_SERVICES=\).*:\1n-cpu:g" $CONF_PATH
-fi
 
+cd $DEVSTACK_HOME
 $DEVSTACK_HOME/stack.sh
 
 # write a marker file to indicate successful stacking
