@@ -8,13 +8,18 @@
 #       fn_docker_dns_lookup is a DNS-like function that returns the IPv4Address of a container,
 #       +given the container's host name and the docker network to look in
        
+function fn_show_container_networks {
+    local HOST_NAME=$1
+    docker inspect -f 'host "{{.Config.Hostname}}" IPv4 docker network addresses:{{range $id, $conf := .NetworkSettings.Networks}}|{{$id}}: {{$conf.IPAddress}}/{{$conf.IPPrefixLen}}{{end}}' $HOST_NAME | tr '|' '\n'
+}
+
 function fn_show_docker_networks {
-    docker network inspect -f "network::  {{.Name}}" $(docker network ls -q)
+    docker network inspect -f 'network::  {{.Name}}' $(docker network ls -q)
 }
 
 function fn_show_containers_in_network {
     # the "|" pipe is used to separate network tenants. Pipe through "tr "|" "\n" to sub newlines
-    docker network inspect -f "{{range .Containers}}{{with .}}{{.Name}}: {{.IPv4Address}}|{{end}}{{end}}" $1
+    docker network inspect -f '{{range .Containers}}{{with .}}{{.Name}}: {{.IPv4Address}}|{{end}}{{end}}' $1
 }
 
 function fn_list_containers_in_network {
@@ -24,7 +29,7 @@ function fn_list_containers_in_network {
 }
 
 function fn_show_overlay_tenants {
-    NETWORK_TYPE=${NETWORK_TYPE:-"overlay"}
+    local NETWORK_TYPE=${NETWORK_TYPE:-"overlay"}
     echo "Network Type:: $NETWORK_TYPE"
     for NETWORK_NAME in $(docker network ls -q -f "Driver=${NETWORK_TYPE}") ; do
         echo -n "Containers in network: "
@@ -34,8 +39,10 @@ function fn_show_overlay_tenants {
 }
 
 function fn_docker_dns_lookup {
-    NETWORK_NAME=$1
-    HOST_NAME=$2
+    local NETWORK_NAME=$1
+    local HOST_NAME=$2
+    # WARNING: if the HOST_NAME container is not present on the local system, 
+    # +this method will return nothing.
     # you can directly access key.Field with the (index <map> <key>) function
     docker network inspect -f "{{ (index .Containers \"${LONG_ID}\").IPv4Address  }}" $NETWORK_NAME
 }
@@ -59,34 +66,37 @@ function fn_lookup_mapped_host_port {
     docker inspect -f "{{ (index (index .NetworkSettings.Ports \"80/tcp\" ) 0 ).HostPort }}" $HOST_NAME
 }
 
-HOST_NAME=${1:-service-node-o17}
+HOST_NAME_IN=${1:-service-node-o17}
+NETWORK_NAME_IN=${2:-overlay-net}
+HOST_NAME=$HOST_NAME_IN
+NETWORK_NAME=${NETWORK_NAME_IN}
+
 LONG_ID=$(docker inspect -f "{{.Id}}" $HOST_NAME)
-NETWORK_NAME=${2:-overlay-net}
 echo
 echo Docker container lookups::
-echo fn_show_exposed_ports service-node-o17
-fn_show_exposed_ports service-node-o17
+echo fn_show_exposed_ports ${HOST_NAME}
+fn_show_exposed_ports ${HOST_NAME}
 echo
 echo "fn_lookup_mapped_host_port \"80/tcp\""
 fn_lookup_mapped_host_port
 echo
 echo Docker network lookups:::
 echo IP address of host $HOST_NAME on network \"$NETWORK_NAME\"
-fn_docker_dns_lookup $NETWORK_NAME $HOST_NAME
+fn_docker_dns_lookup $NETWORK_NAME ${HOST_NAME}
 echo
 echo fn_show_docker_networks: list the active docker networks
 fn_show_docker_networks
 echo 
-echo fn_show_containers_in_network overlay-net
-fn_show_containers_in_network overlay-net
+echo fn_show_containers_in_network ${NETWORK_NAME}
+fn_show_containers_in_network ${NETWORK_NAME}
 echo
-echo fn_list_containers_in_network overlay-net
-fn_list_containers_in_network overlay-net
+echo fn_list_containers_in_network ${NETWORK_NAME}
+fn_list_containers_in_network ${NETWORK_NAME}
 echo
 echo fn_show_overlay_tenants
 fn_show_overlay_tenants
 echo
-echo fn_docker_dns_lookup overlay-net service-node
-fn_docker_dns_lookup overlay-net service-node
+echo fn_docker_dns_lookup ${NETWORK_NAME} ${HOST_NAME}
+fn_docker_dns_lookup ${NETWORK_NAME} ${HOST_NAME}
 echo
 
