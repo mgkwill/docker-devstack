@@ -5,7 +5,7 @@
 
 # image selection
 IMAGE_REPO=${IMAGE_REPO:-s3p/service}
-IMAGE_TAG=${IMAGE_TAG:-v0.3}
+IMAGE_TAG=${IMAGE_TAG:-v0.4}
 IMAGE_NAME="${IMAGE_REPO}:${IMAGE_TAG}"
 
 # image configuration
@@ -28,8 +28,8 @@ HORIZON_PORT_HOST=$(( $PORT_MAP_OFFSET + $HORIZON_PORT_CONTAINER ))
 DLUX_PORT_HOST=$(( $PORT_MAP_OFFSET + $DLUX_PORT_CONTAINER ))
 VNC_PORT_HOST=$(( $PORT_MAP_OFFSET + $VNC_PORT_CONTAINER ))
 PORT_MAP="-p ${HORIZON_PORT_HOST}:${HORIZON_PORT_CONTAINER} -p ${DLUX_PORT_HOST}:${DLUX_PORT_CONTAINER} -p ${VNC_PORT_HOST}:${VNC_PORT_CONTAINER} "
-NETWORK_NAME=${NETWORK_NAME:-"mgmt-net"}
-NETWORK_SETTINGS="--net=$NETWORK_NAME $PORT_MAP"
+# NETWORK_NAME=${NETWORK_NAME:-"mgmt-net"}
+NETWORK_SETTINGS=" $PORT_MAP" # --net=$NETWORK_NAME
 
 NAME=${HOST_NAME:-service-node}
 # TODO: the following section, up to the "run" seems unnecessary
@@ -55,6 +55,8 @@ docker run -dit --name ${NAME} --hostname ${NAME} --env TZ=America/Los_Angeles \
     --env no_proxy=$_no_proxy \
     --env ODL_NETWORK=$ODL_NETWORK \
     --env STACK_PASS=$STACK_PASS \
+    --env SERVICE_HOST=$SERVICE_HOST \
+    --env container=docker \
     $NETWORK_SETTINGS \
     $MOUNTS \
     $CAPABILITIES \

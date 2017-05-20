@@ -7,7 +7,7 @@
 
 # image selection
 IMAGE_REPO=${IMAGE_REPO:-ss3p/compute}
-IMAGE_TAG=${IMAGE_TAG:-v0.3}
+IMAGE_TAG=${IMAGE_TAG:-v0.4}
 IMAGE_NAME="${IMAGE_REPO}:${IMAGE_TAG}"
 
 # image configuration
@@ -26,8 +26,8 @@ SERVICE_HOST=${SERVICE_HOST:-192.168.3.2}
 # define _no_proxy based on the cluster topology
 _no_proxy=localhost,10.0.0.0/8,192.168.0.0/16,172.17.0.0/16,127.0.0.1,127.0.0.0/8,$SERVICE_HOST
 PORT_MAP=""
-NETWORK_NAME=${NETWORK_NAME:-overlay-net}
-NETWORK_SETTINGS="--net=$NETWORK_NAME $PORT_MAP" 
+# NETWORK_NAME=${NETWORK_NAME:-"mgmt-net"}
+NETWORK_SETTINGS=" $PORT_MAP" # --net=$NETWORK_NAME
 
 # TODO: automatically detect the service-node here and set it's IP: SERVICE_HOST=$SERVICE_NODE_IP
 # SERVICE_NODE_NAME=${SERVICE_HOST_NAME:-"service-node"}

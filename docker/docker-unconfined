@@ -10,9 +10,11 @@ profile docker-unconfined flags=(attach_disconnected,mediate_deleted) {
   file,
   umount,
   mount,
-  
+  ptrace,
+  signal,
+  dbus,
+
 }
 
-# DENIED: ptrace
 # vim: ft=conf :
 
