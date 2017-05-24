@@ -1,5 +1,5 @@
 #!/bin/bash
-# this will 
+# this will
 # 1) create a pair of veth interfaces
 # 2) add one to a physical bridge (assumed to exist)
 # 3) add the peer to a docker container netns
@@ -30,7 +30,7 @@ function fn_attach_veth_to_container {
     # set the adapter IP address
     ip netns exec $NETNS_NAME ip address add $CONTAINER_IP dev $CONTAINER_VETH_NAME
     echo "Container net-namespace:"
-    ip netns exec $NETNS_NAME ip link set dev $CONTAINER_VETH_NAME up 
+    ip netns exec $NETNS_NAME ip link set dev $CONTAINER_VETH_NAME up
     ip netns exec $NETNS_NAME ip a s
     echo
 }
@@ -41,7 +41,7 @@ function fn_create_and_link_veth {
     VETH_HOST=${VETH_BASE}h
     VETH_CONT=${VETH_BASE}c
     ip link add $VETH_HOST type veth peer name $VETH_CONT
-    ip link set dev $VETH_HOST up 
+    ip link set dev $VETH_HOST up
     ## attach veth in host netns to PHYS_BRIDGE
     brctl addif $PHYS_BRIDGE_NAME $VETH_HOST
 
@@ -55,37 +55,37 @@ function fn_usage {
 }
 
 # main:
-# lab constants 
-MAC_PREFIX="ff:53:00"
+# lab constants
+MAC_PREFIX="fe:53:00"
 HOST_NETNS_ROOT=/var/run/netns
 
 # note: the bridge name should be passed as an input argument
-if [ -z "${1}" ] ; then 
+if [ -z "${1}" ] ; then
     echo "ERROR: no bridge name supplied."
     fn_usage
     exit
 else
     PHYS_BRIDGE_NAME=${1}
-    if [ ! -h "/sys/class/net/${PHYS_BRIDGE_NAME}" ] ; then 
+    if [ ! -h "/sys/class/net/${PHYS_BRIDGE_NAME}" ] ; then
         echo "ERROR: bridge \"$PHYS_BRIDGE_NAME\" does not exist.  Aborting."
         exit 1
     fi
 fi
 
-if [ -z "${2}" ] ; then 
+if [ -z "${2}" ] ; then
     echo "ERROR: no container ID supplied."
     fn_usage
     exit
 else
     CONTAINER_NAME=${2}
     CPID=$(docker inspect -f '{{.State.Pid}}' $CONTAINER_NAME)
-    if [ $? -eq 1 ] ; then 
+    if [ $? -eq 1 ] ; then
         echo "ERROR: container \"$CONTAINER_NAME\" does not exist on this host.  Aborting."
         exit 1
     fi
 fi
 
-if [ -z "${3}" ] ; then 
+if [ -z "${3}" ] ; then
     echo "ERROR: no adapter index supplied."
     fn_usage
     exit
@@ -99,20 +99,21 @@ fn_link_container_netns
 # TODO: these are assumptions based on local lab topology
 SUBNET_BASE="10.11"
 SUBNET_SEGMENT="27"
-if [ "$PHYS_BRIDGE_NAME" == "br_tenant" ] ; then 
-    SUBNET_SEGMENT="127"
+if [ "$PHYS_BRIDGE_NAME" == "br_data" ] ; then
+    SUBNET_SEGMENT="20"
 fi
 SUBNET_PREFIX="${SUBNET_BASE}.${SUBNET_SEGMENT}"
+# echo $SUBNET_PREFIX
 NETMASK_LEN=22
 
 # NOTE: this is a hard part, keeping track of which address has been assigned
-# + this can be deterministic where each container gets an index which is used 
+# + this can be deterministic where each container gets an index which is used
 # + to create the IP address, MAC address, VETH numbering, etc
 H_IXd=$(fn_get_host_index)
-# H_IXd=31 
+# H_IXd=31
 # host index (rack position), convert to 2 hex digits
 # H_IXx (hex representation of host id) can be passed as an input argument or used from the environment
-H_IXx=${H_IXx:-$(printf "%.2x" $H_IXd)} 
+H_IXx=${H_IXx:-$(printf "%.2x" $H_IXd)}
 
 C_IXd=$(cat container_counter.txt)
 
@@ -128,7 +129,7 @@ CONTAINER_MAC="${MAC_PREFIX}:${H_IXx}:${C_IXx}:${A_IX}"
 fn_create_and_link_veth
 
 # if all goes well, we've linked the container to the bridge, update the counter
-if [ $? -eq 0 ] ; then 
+if [ $? -eq 0 ] ; then
     # display status info
     echo "Successfully linked container $CONTAINER_NAME to bridge $PHYS_BRIDGE_NAME"
     echo -e "H_IX:  \t${H_IXd} (0x${H_IXx})"
