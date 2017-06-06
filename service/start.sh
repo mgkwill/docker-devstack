@@ -19,7 +19,7 @@ TAG_NAME="origin/${BRANCH_NAME}"
 echo "stack:$STACK_PASS" | sudo chpasswd
 
 # get container IP
-ip=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
+ip=`/sbin/ip -o -4 addr list ethphys01 | awk '{print $4}' | cut -d/ -f1`
 [ -z "$( echo $no_proxy | grep "$(hostname)" )" ] && export no_proxy="${no_proxy},$(hostname)"
 [ -z "$( echo $no_proxy | grep "${ip}" )" ] && export no_proxy="${no_proxy},${ip}"
 [ -z "$( echo $no_proxy | grep "${SERVICE_HOST}" )" ] && export no_proxy="${no_proxy},${SERVICE_HOST}"
