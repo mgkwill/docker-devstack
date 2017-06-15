@@ -1,0 +1,9 @@
+*.bak
+*logs*
+analysis
+history
+logs
+makefiles
+oldlogs
+working
+experiments
